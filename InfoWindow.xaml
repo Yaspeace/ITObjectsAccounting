@@ -6,7 +6,24 @@
         xmlns:local="clr-namespace:BD_Kursach_WPF"
         mc:Ignorable="d"
         Title="InfoWindow" Height="450" Width="800">
-    <Grid>
-        <DataGrid Name="test_dg" AutoGenerateColumns="True"/>
-    </Grid>
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="Файл"></Button>
+        </ToolBar>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="0.7*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Name="tv_left" Grid.Column="0">
+                <TreeViewItem Name="tvi_computers" Header="Компьютеры"/>
+                <TreeViewItem Name="tvi_stats" Header="Статистика"/>
+            </TreeView>
+            <GridSplitter Grid.Column="1" Width="3"/>
+            <Grid Grid.Column="2" Name="grid_right">
+                <DataGrid Name="dg_db_viewer" AutoGenerateColumns="True" />
+            </Grid>
+        </Grid>
+    </DockPanel>
 </Window>

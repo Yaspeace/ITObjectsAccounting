@@ -31,9 +31,19 @@ namespace BD_Kursach_WPF
             builder.UseMySql(ConnString, new MySqlServerVersion(new Version(8, 0, 27)));
             ocs_db = new OcsWebContext(builder.Options);
 
-            //test_dg.ItemsSource = ocs_db.accountinfo.ToList();
-            //test_dg.ItemsSource = ocs_db.software.ToList();
-            test_dg.ItemsSource = ocs_db.software.ToList();
+            foreach(var comp in ocs_db.hardware)
+            {
+                TreeViewItem tvi = new TreeViewItem();
+                tvi.Name = "tvi_comp_" + comp.ID.ToString();
+                tvi.Selected += ComputerSelected;
+                tvi.Header = comp.NAME;
+                tvi_computers.Items.Add(tvi);
+            }
+        }
+        private void ComputerSelected(object s, RoutedEventArgs e)
+        {
+            int comp_id = Convert.ToInt32(((TreeViewItem)s).Name.Substring(9));
+            dg_db_viewer.ItemsSource = ocs_db.hardware.Where(h => h.ID == comp_id).ToList();
         }
     }
 }
