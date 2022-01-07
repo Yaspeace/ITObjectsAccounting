@@ -6,6 +6,17 @@
         xmlns:local="clr-namespace:BD_Kursach_WPF"
         mc:Ignorable="d"
         Title="InfoWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="tb_h1_style">
+            <Setter Property="TextBlock.FontSize" Value="20"/>
+            <Setter Property="TextBlock.FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="tb_h2_style">
+            <Setter Property="TextBlock.FontSize" Value="15"/>
+            <Setter Property="TextBlock.FontWeight" Value="Bold"/>
+            <Setter Property="TextBlock.Margin" Value="20 0 0 0"/>
+        </Style>
+    </Window.Resources>
     <DockPanel>
         <ToolBar DockPanel.Dock="Top">
             <Button Content="Файл"></Button>
@@ -20,10 +31,77 @@
                 <TreeViewItem Name="tvi_computers" Header="Компьютеры"/>
                 <TreeViewItem Name="tvi_stats" Header="Статистика"/>
             </TreeView>
-            <GridSplitter Grid.Column="1" Width="3"/>
-            <Grid Grid.Column="2" Name="grid_right">
-                <DataGrid Name="dg_db_viewer" AutoGenerateColumns="True" />
-            </Grid>
+            <GridSplitter Grid.Column="1" Width="3" ShowsPreview="False"/>
+            <TabControl Grid.Column="2">
+                <TabItem>
+                    <TabItem.Header>Оборудование</TabItem.Header>
+                    <TabItem.Content>
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <StackPanel CanVerticallyScroll="True">
+                                <TextBlock Name="tb_pc_name" Grid.Column="0" Grid.ColumnSpan="4"
+                           Style="{StaticResource ResourceKey=tb_h1_style}" Text="Имя ИТ-объекта"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Процессор:"/>
+                                <TextBlock Margin="40 0 0 0" Text="Название: " Name="tb_proc_name"/>
+                                <TextBlock Margin="40 0 0 0" Text="Архитектура: " Name="tb_arch"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="ОС:"/>
+                                <TextBlock Margin="40 0 0 0" Text="Название: " Name="tb_os_name"/>
+                                <TextBlock Margin="40 0 0 0" Text="Версия: " Name="tb_os_ver"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="ОЗУ:"/>
+                                <TextBlock Margin="40 0 0 0" Text="Общий объём (МБ): " Name="tb_ram_amount"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_rams"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Память:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_drives"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Диски:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_disks"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Видеокарты:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_vidcards"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>ПО</TabItem.Header>
+                    <TabItem.Content>
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <StackPanel CanVerticallyScroll="True">
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Установленные приложения:"/>
+                                <DataGrid Name="dg_soft" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}"/>
+                                        <DataGridTextColumn Header="Расположение" Binding="{Binding Path=Path}"/>
+                                        <DataGridTextColumn Header="Версия" Binding="{Binding Path=Version}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem.Content>
+                </TabItem>
+                <TabItem>
+                    <TabItem.Header>Периферия</TabItem.Header>
+                    <TabItem.Content>
+                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                            <StackPanel CanVerticallyScroll="True">
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Периферийное оборудование:"/>
+                                
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Мониторы:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_monitors"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Устройства ввода:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_inputs"/>
+
+                                <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Принтеры и факсы:"/>
+                                <StackPanel Margin="40 0 0 0" Name="sp_printers"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem.Content>
+                </TabItem>
+            </TabControl>
         </Grid>
     </DockPanel>
 </Window>
