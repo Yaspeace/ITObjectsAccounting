@@ -241,6 +241,7 @@ namespace BD_Kursach_WPF
             FillHardwareInfo();
             FillSoftwareInfo();
             FillPeripheryInfo();
+            object_info_tab.IsSelected = true;
         }
     }
 }
