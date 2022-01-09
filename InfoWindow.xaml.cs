@@ -22,7 +22,9 @@ namespace BD_Kursach_WPF
     {
         string ConnString { get; set; }
         int ChosenCompID { get; set; }
+        int ChosenDivisionID { get; set; } = 0;
         OcsWebContext ocs_db;
+        WpaContext wpa_db;
         public InfoWindow(string connString)
         {
             InitializeComponent();
@@ -33,15 +35,23 @@ namespace BD_Kursach_WPF
             builder.UseMySql(ConnString, new MySqlServerVersion(new Version(8, 0, 27)));
             ocs_db = new OcsWebContext(builder.Options);
 
-            foreach(var comp in ocs_db.hardware)
+            builder = new DbContextOptionsBuilder();
+            string localConn = "Host=localhost;Port=3306;Username=root;Password=0201;Database=WPA_DB;ConvertZeroDateTime=True";
+            builder.UseMySql(localConn, new MySqlServerVersion(new Version(8, 0, 27)));
+            wpa_db = new WpaContext(builder.Options);
+
+            WpaIntegrityUpdate(); //Синхронизация данных локальной бд и OCS-ки
+        }
+
+        private void WpaIntegrityUpdate()
+        {
+            foreach(var bind in wpa_db.unit_bindings)
             {
-                TreeViewItem tvi = new TreeViewItem();
-                tvi.Name = "tvi_comp_" + comp.ID.ToString();
-                tvi.Selected += ComputerSelected;
-                tvi.Header = comp.NAME;
-                tvi_computers.Items.Add(tvi);
+                if (ocs_db.hardware.Find(bind.hardware_id) == null)
+                    wpa_db.unit_bindings.Remove(bind);
             }
         }
+
         private void FillHardwareInfo()
         {
             hardwareModel? ChosenComp = ocs_db.hardware.Find(ChosenCompID);
@@ -235,13 +245,149 @@ namespace BD_Kursach_WPF
             }
         }
 
+        //Выбран конкретный ИТ-объект в левом дереве
         private void ComputerSelected(object s, RoutedEventArgs e)
         {
+            e.Handled = true; //Disable execution of methods which are for tvi's higher by hierarchy
+
             ChosenCompID = Convert.ToInt32(((TreeViewItem)s).Name.Substring(9));
+            object_info_tab.IsSelected = true;
+            
             FillHardwareInfo();
             FillSoftwareInfo();
             FillPeripheryInfo();
-            object_info_tab.IsSelected = true;
+            
+        }
+
+        //Выбран элемент "Подразделения" в левом TreeView
+        private void tvi_divisions_Selected(object sender, RoutedEventArgs e)
+        {
+            divisions_tab.IsSelected = true;
+            tvi_divisions.Items.Clear();
+            lb_divisions.Items.Clear();
+            foreach(var div in wpa_db.units.ToList())
+            {
+                TreeViewItem tvi = new TreeViewItem();
+                tvi.Name = "tvi_div_" + div.id.ToString();
+                tvi.Header = div.name;
+                tvi.Selected += tvi_div_selected;
+                tvi.DataContext = div.id;
+                tvi_divisions.Items.Add(tvi);
+                ListBoxItem lbi = new ListBoxItem();
+                lbi.Content = div.name;
+                lbi.DataContext = div.id;
+                lb_divisions.Items.Add(lbi);
+                foreach (var obj in ocs_db.hardware)
+                {
+                    if (wpa_db.unit_bindings.Any(ub => ub.hardware_id == obj.ID && ub.unit_id == div.id))
+                    {
+                        TreeViewItem tvi_comp = new TreeViewItem();
+                        tvi_comp.Name = "tvi_comp_" + obj.ID.ToString();
+                        tvi_comp.Header = obj.NAME;
+                        tvi_comp.Selected += ComputerSelected;
+                        tvi_comp.DataContext = obj.ID;
+                        tvi.Items.Add(tvi_comp);
+                    }
+                }
+            }
+        }
+
+        //Выбор конкретного подразделения (страничка с возможностью добавления в него компов)
+        private void tvi_div_selected(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            division_edit_tab.IsSelected = true;
+            lb_assigned_objects.Items.Clear();
+            lb_unassigned_objects.Items.Clear();
+
+            TreeViewItem selected_tvi = (TreeViewItem)sender;
+            int cur_div_id = (int)selected_tvi.DataContext;
+            ChosenDivisionID = cur_div_id;
+            foreach(var obj in ocs_db.hardware)
+            {
+                ListBoxItem lbi = new ListBoxItem();
+                lbi.Content = obj.NAME;
+                lbi.DataContext = obj.ID;
+                if (wpa_db.unit_bindings.Any(bind => bind.hardware_id == obj.ID && bind.unit_id == cur_div_id))
+                    lb_assigned_objects.Items.Add(lbi);
+                else
+                    lb_unassigned_objects.Items.Add(lbi);
+            }
+        }
+
+        //Открытие странички "добавление подразделения"
+        private void btn_add_division_Click(object sender, RoutedEventArgs e)
+        {
+            division_adding_tab.IsSelected = true;
+            e.Handled = true;
+        }
+
+        //Выбор какого-либо подразделения из списка (на страничке с добавлением подразделений в правом окне)
+        private void lb_divisions_Selected(object sender, RoutedEventArgs e)
+        {
+            ListBox lb = (ListBox)sender;
+            if (lb.SelectedItem != null)
+            {
+                ListBoxItem lbi = lb.SelectedItem as ListBoxItem;
+                string? selected_div_name = lbi.Content.ToString();
+                tb_division_desc.Text = wpa_db.units.Find((int)lbi.DataContext).descriprion;
+            }
+            else
+                tb_division_desc.Text = String.Empty;
+        }
+
+        //Нажатие на кнопку "Добавить" на страничке добавления подразделения
+        private void btn_add_div_Click(object sender, RoutedEventArgs e)
+        {
+            Unit u = new Unit();
+            if (wpa_db.units.Count() > 0)
+                u.id = wpa_db.units.Max(u => u.id) + 1;
+            else
+                u.id = 1;
+            u.name = tb_div_name.Text;
+            u.descriprion = tb_div_desc.Text;
+            wpa_db.units.Add(u);
+            wpa_db.SaveChanges();
+
+            tvi_divisions_Selected(tvi_divisions, e);
+        }
+
+        private void btn_del_division_Click(object sender, RoutedEventArgs e)
+        {
+            if(lb_divisions.SelectedItem != null)
+            {
+                ListBoxItem lbi = lb_divisions.SelectedItem as ListBoxItem;
+                lb_divisions.Items.Remove(lbi);
+                wpa_db.Remove(wpa_db.units.Find((int)lbi.DataContext));
+                wpa_db.SaveChanges();
+            }
+        }
+
+        //Добавление компов в подразделение
+        private void btn_assign_objects_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var sel in lb_unassigned_objects.SelectedItems)
+            {
+                ListBoxItem lbi = (ListBoxItem)sel;
+                wpa_db.unit_bindings.Add(new UnitBinding(null, (int)lbi.DataContext, ChosenDivisionID));
+            }
+            wpa_db.SaveChanges();
+            tvi_divisions.IsSelected = true;
+            tvi_divisions_Selected(tvi_divisions, e);
+        }
+
+        //Удаление компов из подразделения
+        private void btn_unassign_objects_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var sel in lb_assigned_objects.SelectedItems)
+            {
+                ListBoxItem lbi = (ListBoxItem)sel;
+                wpa_db.unit_bindings.RemoveRange(wpa_db.unit_bindings.Where(bind 
+                    => bind.hardware_id == (int)lbi.DataContext && bind.unit_id == ChosenDivisionID));
+            }
+            wpa_db.SaveChanges();
+            tvi_divisions.IsSelected = true;
+            tvi_divisions_Selected(tvi_divisions, e);
         }
     }
 }

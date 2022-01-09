@@ -9,9 +9,14 @@ namespace BD_Kursach_WPF
         public DbSet<Unit> units { get; set; }
         public DbSet<Position> positions { get; set; }
         public DbSet<SoftwareReq> software_requirements { get; set; }
+        public DbSet<UnitBinding> unit_bindings { get; set; }
         public WpaContext(DbContextOptions opt) : base(opt)
         {
             Database.EnsureCreated();
+        }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            
         }
     }
 }

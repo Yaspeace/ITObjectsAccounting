@@ -18,9 +18,16 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <ToolBar DockPanel.Dock="Top">
-            <Button Content="Файл"></Button>
-        </ToolBar>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл"/>
+            <MenuItem Header="Вид">
+                <MenuItem Header="Отображение...">
+                    <MenuItem Header="По подразделениям"/>
+                    <MenuItem Header="По локациям"/>
+                    <MenuItem Header="Сквозное"/>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.3*"/>
@@ -28,11 +35,75 @@
                 <ColumnDefinition Width="0.7*"/>
             </Grid.ColumnDefinitions>
             <TreeView Name="tv_left" Grid.Column="0">
-                <TreeViewItem Name="tvi_computers" Header="Компьютеры"/>
-                <TreeViewItem Name="tvi_stats" Header="Статистика"/>
+                <TreeViewItem Name="tvi_divisions" Header="Подразделения" Selected="tvi_divisions_Selected"/>
             </TreeView>
             <GridSplitter Grid.Column="1" Width="3" ShowsPreview="False"/>
             <TabControl Grid.Column="2">
+                
+                <TabItem Name="divisions_tab" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.4*"/>
+                            <ColumnDefinition Width="0.2*"/>
+                            <ColumnDefinition Width="0.4*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <ListBox Name="lb_divisions" SelectionChanged="lb_divisions_Selected" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+                            <Button Name="btn_add_division" Content="Добавить подразделение..." Click="btn_add_division_Click"/>
+                            <WrapPanel Margin="0,10,0,0">
+                                <Button Name="btn_del_division" Content="Удалить" Click="btn_del_division_Click"/>
+                            </WrapPanel>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Margin="0" Text="Описание:"/>
+                            <TextBlock TextWrapping="Wrap" Name="tb_division_desc"/>
+                        </StackPanel>
+                    </Grid>
+                </TabItem>
+                
+                <TabItem Name="division_adding_tab" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Название:"/>
+                        <TextBox Name="tb_div_name" Width="300" HorizontalAlignment="Left"/>
+                        <TextBlock Text="Описание:"/>
+                        <TextBox Name="tb_div_desc" Width="300" 
+                                 HorizontalAlignment="Left" 
+                                 TextWrapping="Wrap" 
+                                 VerticalScrollBarVisibility="Visible" 
+                                 AcceptsReturn="True"/>
+                        <Button Name="btn_add_div" Content="Добавить" HorizontalAlignment="Left" Click="btn_add_div_Click"/>
+                    </StackPanel>
+                </TabItem>
+                
+                <TabItem Name="division_edit_tab" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.45*"/>
+                            <ColumnDefinition Width="0.1*"/>
+                            <ColumnDefinition Width="0.45*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="0.35*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="0.35*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Margin="0" Text="Назначенные:"/>
+                        <TextBlock Grid.Column="2" Style="{StaticResource ResourceKey=tb_h2_style}" Margin="0" Text="Добавить:"/>
+                        <ListBox Grid.RowSpan="4" Grid.Row="1" 
+                                 Name="lb_assigned_objects" 
+                                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                 SelectionMode="Multiple"/>
+                        <ListBox Grid.RowSpan="4" Grid.Column="2" Grid.Row="1" 
+                                 Name="lb_unassigned_objects" 
+                                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                 SelectionMode="Multiple"/>
+                        <Button Grid.Column="1" Grid.Row="2" Name="btn_assign_objects" Content="&lt;" Click="btn_assign_objects_Click"/>
+                        <Button Grid.Column="1" Grid.Row="3" Name="btn_unassign_objects" Content=">" Click="btn_unassign_objects_Click"/>
+                    </Grid>
+                </TabItem>
+                
                 <TabItem Name="object_info_tab" Visibility="Collapsed">
                     <TabControl>
                         <TabItem Name="test_tab_item1">
@@ -40,8 +111,8 @@
                             <TabItem.Content>
                                 <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                     <StackPanel CanVerticallyScroll="True">
-                                        <TextBlock Name="tb_pc_name" Grid.Column="0" Grid.ColumnSpan="4"
-                           Style="{StaticResource ResourceKey=tb_h1_style}" Text="Имя ИТ-объекта"/>
+                                        <TextBlock Name="tb_pc_name" Grid.Column="0" Grid.ColumnSpan="4" 
+                                                   Style="{StaticResource ResourceKey=tb_h1_style}" Text="Имя ИТ-объекта"/>
 
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Процессор:"/>
                                         <TextBlock Margin="40 0 0 0" Text="Название: " Name="tb_proc_name"/>
@@ -105,6 +176,7 @@
                         </TabItem>
                     </TabControl>
                 </TabItem>
+            
             </TabControl>
         </Grid>
     </DockPanel>
