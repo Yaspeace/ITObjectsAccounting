@@ -27,6 +27,11 @@
                     <MenuItem Header="Сквозное"/>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="Управление">
+                <MenuItem Header="Локации">
+                    <MenuItem Name="menu_add_loc" Header="Добавить/Удалить..." Click="menu_add_loc_Click"/>
+                </MenuItem>
+            </MenuItem>
         </Menu>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -106,14 +111,31 @@
                 
                 <TabItem Name="object_info_tab" Visibility="Collapsed">
                     <TabControl>
+                        <TabItem>
+                            <TabItem.Header>Общее</TabItem.Header>
+                            <TabItem.Content>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                    <StackPanel>
+                                        <TextBlock Name="tb_pc_name" Style="{StaticResource ResourceKey=tb_h1_style}" Text="Имя ИТ-объекта"/>
+                                        <WrapPanel>
+                                            <TextBlock Text="Локация: "/>
+                                            <TextBlock Text="" Name="tb_obj_location"/>
+                                            <Button Name="btn_set_location" Content="Изменить..." Click="btn_set_location_Click"/>
+                                        </WrapPanel>
+                                        <WrapPanel>
+                                            <TextBlock Text="Должность: "/>
+                                            <TextBlock Text="" Name="tb_obj_position"/>
+                                            <Button Name="btn_set_position" Content="Изменить..." Click="btn_set_position_Click"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </TabItem.Content>
+                        </TabItem>
                         <TabItem Name="test_tab_item1">
                             <TabItem.Header>Оборудование</TabItem.Header>
                             <TabItem.Content>
-                                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                     <StackPanel CanVerticallyScroll="True">
-                                        <TextBlock Name="tb_pc_name" Grid.Column="0" Grid.ColumnSpan="4" 
-                                                   Style="{StaticResource ResourceKey=tb_h1_style}" Text="Имя ИТ-объекта"/>
-
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h2_style}" Text="Процессор:"/>
                                         <TextBlock Margin="40 0 0 0" Text="Название: " Name="tb_proc_name"/>
                                         <TextBlock Margin="40 0 0 0" Text="Архитектура: " Name="tb_arch"/>
@@ -141,7 +163,7 @@
                         <TabItem Name="test_tab_item2">
                             <TabItem.Header>ПО</TabItem.Header>
                             <TabItem.Content>
-                                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                     <StackPanel CanVerticallyScroll="True">
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Установленные приложения:"/>
                                         <DataGrid Name="dg_soft" AutoGenerateColumns="False">
@@ -158,7 +180,7 @@
                         <TabItem>
                             <TabItem.Header>Периферия</TabItem.Header>
                             <TabItem.Content>
-                                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                     <StackPanel CanVerticallyScroll="True">
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Периферийное оборудование:"/>
 

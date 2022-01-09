@@ -50,6 +50,45 @@ namespace BD_Kursach_WPF
                 if (ocs_db.hardware.Find(bind.hardware_id) == null)
                     wpa_db.unit_bindings.Remove(bind);
             }
+            foreach(var bind in wpa_db.location_bindings)
+            {
+                if (ocs_db.hardware.Find(bind.hardware_id) == null)
+                    wpa_db.location_bindings.Remove(bind);
+            }
+            foreach (var bind in wpa_db.position_obj_bindings)
+            {
+                if (ocs_db.hardware.Find(bind.hardware_id) == null)
+                    wpa_db.position_obj_bindings.Remove(bind);
+            }
+            foreach (var bind in wpa_db.position_software_bindings)
+            {
+                if (ocs_db.software.Find(bind.software_id) == null)
+                    wpa_db.position_software_bindings.Remove(bind);
+            }
+        }
+        private void FillGeneralInfo()
+        {
+            hardwareModel? ChosenComp = ocs_db.hardware.Find(ChosenCompID);
+            string loc_name = "Не назначено";
+            string pos_name = "Не назначено";
+            if (ChosenComp != null)
+            {
+                tb_pc_name.Text = ChosenComp.NAME;
+                
+                if(wpa_db.location_bindings.Any(bind => bind.hardware_id == ChosenCompID))
+                {
+                    LocationBinding loc_bind = wpa_db.location_bindings.Where(bind => bind.hardware_id == ChosenCompID).First();
+                    loc_name = wpa_db.locations.Find(loc_bind.location_id).name;
+                }
+                tb_obj_location.Text = loc_name;
+
+                if(wpa_db.position_obj_bindings.Any(bind => bind.hardware_id == ChosenCompID))
+                {
+                    PositionObjBinding pos_bind = wpa_db.position_obj_bindings.Where(bind => bind.hardware_id == ChosenCompID).First();
+                    pos_name = wpa_db.positions.Find(pos_bind.position_id).name;
+                }
+                tb_obj_position.Text = pos_name;
+            }
         }
 
         private void FillHardwareInfo()
@@ -63,7 +102,6 @@ namespace BD_Kursach_WPF
             
             if (ChosenComp != null)
             {
-                tb_pc_name.Text = ChosenComp.NAME;
                 tb_arch.Text = "Архитектура: " + ChosenComp.ARCH;
                 tb_os_name.Text = "Название: " + ChosenComp.OSNAME;
                 tb_os_ver.Text = "Версия: " + ChosenComp.OSVERSION;
@@ -252,11 +290,11 @@ namespace BD_Kursach_WPF
 
             ChosenCompID = Convert.ToInt32(((TreeViewItem)s).Name.Substring(9));
             object_info_tab.IsSelected = true;
-            
+
+            FillGeneralInfo();
             FillHardwareInfo();
             FillSoftwareInfo();
             FillPeripheryInfo();
-            
         }
 
         //Выбран элемент "Подразделения" в левом TreeView
@@ -388,6 +426,25 @@ namespace BD_Kursach_WPF
             wpa_db.SaveChanges();
             tvi_divisions.IsSelected = true;
             tvi_divisions_Selected(tvi_divisions, e);
+        }
+
+        private void btn_set_location_Click(object sender, RoutedEventArgs e)
+        {
+            SetLocationWnd slw = new SetLocationWnd(ChosenCompID, ocs_db, wpa_db);
+            slw.ShowDialog();
+            tvi_divisions.IsSelected = true;
+            tvi_divisions_Selected(tvi_divisions, e);
+        }
+
+        private void btn_set_position_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void menu_add_loc_Click(object sender, RoutedEventArgs e)
+        {
+            LocationManagerWnd lmw = new LocationManagerWnd(wpa_db);
+            lmw.ShowDialog();
         }
     }
 }

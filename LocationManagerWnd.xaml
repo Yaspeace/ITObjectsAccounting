@@ -1,0 +1,49 @@
+﻿<Window x:Class="BD_Kursach_WPF.LocationManagerWnd"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BD_Kursach_WPF"
+        mc:Ignorable="d"
+        Title="LocationManagerWnd" Height="450" Width="600">
+    <TabControl>
+        <TabItem Name="main_tab" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="0.7*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Выберите локацию для удаления"/>
+                <ListBox Grid.Row="1" Name="lb_locations" ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="lb_locations_SelectionChanged"/>
+                <WrapPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0 0 0 10">
+                    <Button Name="btn_add" Content="Добавить" Click="btn_add_Click"/>
+                    <Button Name="btn_delete" Content="Удалить" Click="btn_delete_Click" Margin="10 0 0 0"/>
+                </WrapPanel>
+                <StackPanel Grid.Column="1" Grid.RowSpan="2">
+                    <TextBlock Text="Описание:"/>
+                    <TextBlock Name="tb_desc" TextWrapping="Wrap"/>
+                </StackPanel>
+                <WrapPanel Grid.Column="1" Grid.Row="2" HorizontalAlignment="Right">
+                    <Button Name="btn_cancel" Content="Принять" Click="btn_cancel_Click" Margin="10 0 10 0"/>
+                </WrapPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Name="adding_tab" Visibility="Collapsed">
+            <StackPanel>
+                <TextBlock FontWeight="Bold" Text="Название:"/>
+                <TextBox Name="tb_new_loc_name"/>
+                <TextBlock FontWeight="Bold" Text="Описание:"/>
+                <TextBox Name="tb_new_loc_desc" TextWrapping="Wrap"/>
+                <WrapPanel>
+                    <Button Name="btn_add_new_loc" Content="Добавить" Click="btn_add_new_loc_Click"/>
+                    <Button Name="btn_add_cancel" Content="Отмена" Click="btn_add_cancel_Click" Margin="10 0 0 0"/>
+                </WrapPanel>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</Window>
