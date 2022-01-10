@@ -174,6 +174,7 @@ namespace BD_Kursach_WPF
                     pb.Minimum = 0;
                     pb.Maximum = (double)disk.TOTAL;
                     pb.Value = (double)(disk.TOTAL - disk.FREE);
+                    pb.HorizontalAlignment = HorizontalAlignment.Left;
                     sp_disks.Children.Add(pb);
                 }
                 
@@ -196,6 +197,7 @@ namespace BD_Kursach_WPF
             }
         }
 
+        //2DO: Подумать над оптимизацией. Работает СЛИШКОМ медленно!
         private void FillSoftwareInfo()
         {
             List<SoftVisualModel> softList = new List<SoftVisualModel>();
@@ -222,7 +224,35 @@ namespace BD_Kursach_WPF
             {
                 string softname = ocs_db.software_name.Where(s_name => s_name.ID == soft.NAME_ID).First().NAME;
                 string softver = ocs_db.software_version.Where(s_ver => s_ver.ID == soft.VERSION_ID).First().VERSION;
-                softList.Add(new SoftVisualModel(softname, soft.FOLDER, softver));
+                try
+                {
+                    SoftwareReq softreq = wpa_db.software_requirements.Where(s_req => s_req.software_id == soft.ID).First();
+                    softList.Add(new SoftVisualModel(
+                        softname, 
+                        soft.FOLDER, 
+                        softver,
+                        softreq.cpu_freq,
+                        softreq.cpu_cores,
+                        softreq.ram_memory_mb,
+                        softreq.hard_drive_mem_amount_mb,
+                        softreq.os_windows_version,
+                        softreq.directx_version
+                        ));
+                }
+                catch(InvalidOperationException)
+                {
+                    softList.Add(new SoftVisualModel(
+                        softname,
+                        soft.FOLDER,
+                        softver,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                        ));
+                }
             }
             dg_soft.ItemsSource = softList;
         }
@@ -485,7 +515,7 @@ namespace BD_Kursach_WPF
             pmw.ShowDialog();
         }
 
-        //2DO: Работает слишком медленно. Придумать оптимизацию.
+        //2DO: Работает слишком медленно. Подумать над оптимизацией.
         private void BuildSoftDiagram(int obj_id)
         {
             int needed_installed = 0;
@@ -518,6 +548,21 @@ namespace BD_Kursach_WPF
         {
             if(_loaded)
                 FillSoftwareInfo();
+        }
+
+        private void btn_quit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btn_show_req_Click(object sender, RoutedEventArgs e)
+        {
+            FillSoftwareInfo();
+        }
+
+        private void menu_requirements_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

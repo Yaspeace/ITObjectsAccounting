@@ -20,7 +20,9 @@
     </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Файл"/>
+            <MenuItem Header="Файл">
+                <MenuItem Header="Выход" Name="btn_quit" Click="btn_quit_Click"/>
+            </MenuItem>
             <MenuItem Header="Вид">
                 <MenuItem Header="Отображение...">
                     <MenuItem Header="По подразделениям"/>
@@ -34,6 +36,9 @@
                 </MenuItem>
                 <MenuItem Header="Должности">
                     <MenuItem Name="menu_positions" Header="Добавить/Удалить..." Click="menu_positions_Click"/>
+                </MenuItem>
+                <MenuItem Header="Системные требования">
+                    <MenuItem Name="menu_requirements" Header="Просмотр/Изменение..." Click="menu_requirements_Click"/>
                 </MenuItem>
             </MenuItem>
         </Menu>
@@ -173,7 +178,7 @@
                                     <StackPanel CanVerticallyScroll="True">
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Установленные приложения:"/>
                                         <WrapPanel>
-                                            <TextBlock Text="Показать:"/>
+                                            <TextBlock Text="Показать:" VerticalAlignment="Center"/>
                                             <ComboBox SelectedIndex="0" Name="cb_soft" SelectionChanged="cb_soft_SelectionChanged">
                                                 <ComboBoxItem Content="Установлено"/>
                                                 <ComboBoxItem Content="Установлено/Необходимо"/>
@@ -185,6 +190,12 @@
                                                 <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}"/>
                                                 <DataGridTextColumn Header="Расположение" Binding="{Binding Path=Path}"/>
                                                 <DataGridTextColumn Header="Версия" Binding="{Binding Path=Version}"/>
+                                                <DataGridTextColumn Header="Частота процессора, ГГЦ" Binding="{Binding Path=CpuFreq}"/>
+                                                <DataGridTextColumn Header="Количество ядер" Binding="{Binding Path=CpuCores}"/>
+                                                <DataGridTextColumn Header="ОЗУ, МБ" Binding="{Binding Path=RamMemory}"/>
+                                                <DataGridTextColumn Header="Свободное место, МБ" Binding="{Binding Path=StorMemory}"/>
+                                                <DataGridTextColumn Header="Версия ОС Windows" Binding="{Binding Path=WindowsVer}"/>
+                                                <DataGridTextColumn Header="Версия DirectX" Binding="{Binding Path=DirectXVer}"/>
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </StackPanel>
