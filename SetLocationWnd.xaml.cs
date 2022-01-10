@@ -20,13 +20,11 @@ namespace BD_Kursach_WPF
     public partial class SetLocationWnd : Window
     {
         int ChosenObjID { get; set; }
-        OcsWebContext ocs_db { get; set; }
         WpaContext wpa_db { get; set; }
-        public SetLocationWnd(int obj_id, OcsWebContext ocs_db, WpaContext wpa_db)
+        public SetLocationWnd(int obj_id, WpaContext wpa_db)
         {
             InitializeComponent();
             ChosenObjID = obj_id;
-            this.ocs_db = ocs_db;
             this.wpa_db = wpa_db;
 
             FillLocations();

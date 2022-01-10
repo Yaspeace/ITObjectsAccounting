@@ -14,6 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Microsoft.Expression.Drawing">
+      <HintPath>..\PieControls_Code\Assemblies\Microsoft.Expression.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="PieControls">
+      <HintPath>PieControls_Binaries\PieControls.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 

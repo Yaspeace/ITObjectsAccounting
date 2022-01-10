@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Expression.Drawing;
+using PieControls;
 
 namespace BD_Kursach_WPF
 {
@@ -59,11 +63,6 @@ namespace BD_Kursach_WPF
             {
                 if (ocs_db.hardware.Find(bind.hardware_id) == null)
                     wpa_db.position_obj_bindings.Remove(bind);
-            }
-            foreach (var bind in wpa_db.position_software_bindings)
-            {
-                if (ocs_db.software.Find(bind.software_id) == null)
-                    wpa_db.position_software_bindings.Remove(bind);
             }
         }
         private void FillGeneralInfo()
@@ -295,6 +294,15 @@ namespace BD_Kursach_WPF
             FillHardwareInfo();
             FillSoftwareInfo();
             FillPeripheryInfo();
+
+            //Выглядит как костыль-костылём. Придумать более лаконичное решение.
+            if (tb_obj_position.Text != "Не назначено")
+            {
+                BuildSoftDiagram(ChosenCompID);
+                pie_soft.Visibility = Visibility.Visible;
+            }
+            else
+                pie_soft.Visibility = Visibility.Hidden;
         }
 
         //Выбран элемент "Подразделения" в левом TreeView
@@ -430,7 +438,7 @@ namespace BD_Kursach_WPF
 
         private void btn_set_location_Click(object sender, RoutedEventArgs e)
         {
-            SetLocationWnd slw = new SetLocationWnd(ChosenCompID, ocs_db, wpa_db);
+            SetLocationWnd slw = new SetLocationWnd(ChosenCompID, wpa_db);
             slw.ShowDialog();
             tvi_divisions.IsSelected = true;
             tvi_divisions_Selected(tvi_divisions, e);
@@ -438,13 +446,50 @@ namespace BD_Kursach_WPF
 
         private void btn_set_position_Click(object sender, RoutedEventArgs e)
         {
-
+            SetPositionWnd spw = new SetPositionWnd(ChosenCompID, wpa_db);
+            spw.ShowDialog();
+            tvi_divisions.IsSelected = true;
+            tvi_divisions_Selected(tvi_divisions, e);
         }
 
         private void menu_add_loc_Click(object sender, RoutedEventArgs e)
         {
             LocationManagerWnd lmw = new LocationManagerWnd(wpa_db);
             lmw.ShowDialog();
+        }
+
+        private void menu_positions_Click(object sender, RoutedEventArgs e)
+        {
+            PositionManagerWnd pmw = new PositionManagerWnd(wpa_db);
+            pmw.ShowDialog();
+        }
+
+        //2DO: Работает слишком медленно. Придумать оптимизацию.
+        private void BuildSoftDiagram(int obj_id)
+        {
+            int needed_installed = 0;
+            int unneeded_installed = 0;
+            int needed_uninstalled = 0;
+
+            foreach(var soft in ocs_db.software.ToList())
+            {
+                string soft_name = ocs_db.software_name.Find(soft.NAME_ID).NAME;
+                if (wpa_db.position_software_bindings.Any(bind => soft_name.Contains(bind.soft_name)))
+                    needed_installed++;
+                else
+                    unneeded_installed++;
+            }
+            foreach(var bind in wpa_db.position_software_bindings)
+            {
+                if (!ocs_db.software_name.Any(name => name.NAME.Contains(bind.soft_name)))
+                    needed_uninstalled++;
+            }
+
+            ObservableCollection<PieSegment> pieCollection = new ObservableCollection<PieSegment>();
+            pieCollection.Add(new PieSegment { Color = Colors.Green, Value = needed_installed, Name = "Установлено/Необходимо" });
+            pieCollection.Add(new PieSegment { Color = Colors.Yellow, Value = unneeded_installed, Name = "Установлено/Не необходимо" });
+            pieCollection.Add(new PieSegment { Color = Colors.Red, Value = needed_uninstalled, Name = "Не установлено/Необходимо" });
+            pie_soft.Data = pieCollection;
         }
     }
 }
