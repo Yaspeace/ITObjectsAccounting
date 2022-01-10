@@ -138,6 +138,76 @@
                                         </WrapPanel>
                                         <TextBlock Text="Оценка актуальности ПО для выбранной должности:" FontWeight="DemiBold"/>
                                         <pie:PieChart HorizontalAlignment="Left" x:Name="pie_soft" Width="260" Height="140" PieWidth="120" PieHeight="120"/>
+                                        <TextBlock Text="Сводка информации о системных требованиях:" FontWeight="DemiBold"/>
+                                        <Grid Name="grid_req">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            
+                                            <Rectangle Name="rect_row_1" Fill="White" Grid.Row="1" Grid.ColumnSpan="4"/>
+                                            <Rectangle Name="rect_row_2" Fill="White" Grid.Row="2" Grid.ColumnSpan="4"/>
+                                            <Rectangle Name="rect_row_3" Fill="White" Grid.Row="3" Grid.ColumnSpan="4"/>
+
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="0" Grid.Row="0" />
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="0">
+                                                <TextBlock Text="Устновлено"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="2" Grid.Row="0">
+                                                <TextBlock Text="Требуется"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="3" Grid.Row="0">
+                                                <TextBlock Text="Наиболее требовательное ПО"/>
+                                            </Border>
+                                            
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="0" Grid.Row="1">
+                                                <TextBlock Text="Частота процессора, ГГЦ"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="0" Grid.Row="2">
+                                                <TextBlock Text="Кол-во ядер"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="0" Grid.Row="3">
+                                                <TextBlock Text="ОЗУ, МБ"/>
+                                            </Border>
+
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="1">
+                                                <TextBlock Name="obj_freq"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="2">
+                                                <TextBlock Name="obj_cores"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="1" Grid.Row="3">
+                                                <TextBlock Name="obj_ram"/>
+                                            </Border>
+
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="2" Grid.Row="1">
+                                                <TextBlock Name="soft_freq"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="2" Grid.Row="2">
+                                                <TextBlock Name="soft_cores"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="2" Grid.Row="3">
+                                                <TextBlock Name="soft_ram"/>
+                                            </Border>
+
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="3" Grid.Row="1">
+                                                <TextBlock Name="soft_max_freq"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="3" Grid.Row="2">
+                                                <TextBlock Name="soft_max_cores"/>
+                                            </Border>
+                                            <Border BorderBrush="Gray" BorderThickness="1" Grid.Column="3" Grid.Row="3">
+                                                <TextBlock Name="soft_max_ram"/>
+                                            </Border>
+                                        </Grid> 
                                     </StackPanel>
                                 </ScrollViewer>
                             </TabItem.Content>

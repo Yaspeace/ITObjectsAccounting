@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Expression.Drawing;
 using PieControls;
 
 namespace BD_Kursach_WPF
@@ -346,6 +345,8 @@ namespace BD_Kursach_WPF
             FillSoftwareInfo();
             FillPeripheryInfo();
 
+            BuildReqTable(ChosenCompID);
+
             //Выглядит как костыль-костылём. Придумать более лаконичное решение.
             if (tb_obj_position.Text != "Не назначено")
             {
@@ -542,6 +543,60 @@ namespace BD_Kursach_WPF
             pieCollection.Add(new PieSegment { Color = Colors.Yellow, Value = unneeded_installed, Name = "Установлено/Не необходимо" });
             pieCollection.Add(new PieSegment { Color = Colors.Red, Value = needed_uninstalled, Name = "Не установлено/Необходимо" });
             pie_soft.Data = pieCollection;
+        }
+
+        private void BuildReqTable(int obj_id)
+        {
+            int ofreq = (int)ocs_db.hardware.Find(obj_id).PROCESSORS;
+            int sfreq = ocs_db.software.Where(s => s.HARDWARE_ID == obj_id).ToList()
+                .Join(
+                wpa_db.software_requirements.ToList(),
+                soft => soft.ID,
+                req => req.software_id,
+                (soft, req) => new { freq = req.cpu_freq })
+                .Max(f => f.freq);
+            if (sfreq > ofreq)
+                rect_row_1.Fill = new SolidColorBrush(Colors.Red);
+            else if (sfreq == ofreq)
+                rect_row_1.Fill = new SolidColorBrush(Colors.Yellow);
+            else
+                rect_row_1.Fill = new SolidColorBrush(Colors.LightGreen);
+            obj_freq.Text = ofreq.ToString();
+            soft_freq.Text = sfreq.ToString();
+
+            int ocores = (int)ocs_db.cpus.Where(cpu => cpu.HARDWARE_ID == obj_id).Max(cpu => cpu.CORES);
+            int scores = ocs_db.software.Where(s => s.HARDWARE_ID == obj_id).ToList()
+                .Join(
+                wpa_db.software_requirements.ToList(),
+                soft => soft.ID,
+                req => req.software_id,
+                (soft, req) => new { cores = req.cpu_cores })
+                .Max(f => f.cores);
+            if (scores > ocores)
+                rect_row_2.Fill = new SolidColorBrush(Colors.Red);
+            else if (scores == ocores)
+                rect_row_2.Fill = new SolidColorBrush(Colors.Yellow);
+            else
+                rect_row_2.Fill = new SolidColorBrush(Colors.LightGreen);
+            obj_cores.Text = ocores.ToString();
+            soft_cores.Text = scores.ToString();
+
+            int oram = (int)ocs_db.hardware.Find(obj_id).MEMORY;
+            int sram = ocs_db.software.Where(s => s.HARDWARE_ID == obj_id).ToList()
+                .Join(
+                wpa_db.software_requirements.ToList(),
+                soft => soft.ID,
+                req => req.software_id,
+                (soft, req) => new { ram = req.ram_memory_mb })
+                .Max(f => f.ram);
+            if (sram > oram)
+                rect_row_3.Fill = new SolidColorBrush(Colors.Red);
+            else if (sram == oram)
+                rect_row_3.Fill = new SolidColorBrush(Colors.Yellow);
+            else
+                rect_row_3.Fill = new SolidColorBrush(Colors.LightGreen);
+            obj_ram.Text = oram.ToString();
+            soft_ram.Text = sram.ToString();
         }
 
         private void cb_soft_SelectionChanged(object sender, SelectionChangedEventArgs e)
