@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BD_Kursach_WPF"
         mc:Ignorable="d"
-        Title="LocationManagerWnd" Height="450" Width="600">
+        Title="Менеджер локаций" Height="450" Width="600">
     <TabControl>
         <TabItem Name="main_tab" Visibility="Collapsed">
             <Grid>

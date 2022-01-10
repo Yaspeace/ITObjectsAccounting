@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BD_Kursach_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="337" Width="400">
+        Title="Подключение" Height="337" Width="400">
     <Grid>
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:BD_Kursach_WPF"
         xmlns:pie="clr-namespace:PieControls;assembly=PieControls"
         mc:Ignorable="d"
-        Title="InfoWindow" Height="450" Width="800">
+        Title="Менеджер ИТ-объектов" Height="450" Width="800">
     <Window.Resources>
         <Style x:Key="tb_h1_style">
             <Setter Property="TextBlock.FontSize" Value="20"/>
