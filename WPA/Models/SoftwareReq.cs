@@ -5,8 +5,8 @@ namespace BD_Kursach_WPF
     public class SoftwareReq
     {
         [Key]
-        public int id { get; set; }
-        public int software_id { get; set; }
+        public int? id { get; set; }
+        public long software_id { get; set; }
         public int cpu_freq { get; set; }
         public int cpu_cores { get; set; }
         public int ram_memory_mb { get; set; }

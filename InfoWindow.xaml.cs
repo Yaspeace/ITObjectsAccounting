@@ -562,7 +562,9 @@ namespace BD_Kursach_WPF
 
         private void menu_requirements_Click(object sender, RoutedEventArgs e)
         {
-
+            RequirementsManagerWnd wnd = new RequirementsManagerWnd(ocs_db, wpa_db);
+            wnd.ShowDialog();
+            FillSoftwareInfo();
         }
     }
 }
