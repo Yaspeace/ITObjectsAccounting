@@ -172,7 +172,15 @@
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                                     <StackPanel CanVerticallyScroll="True">
                                         <TextBlock Style="{StaticResource ResourceKey=tb_h1_style}" Text="Установленные приложения:"/>
-                                        <DataGrid Name="dg_soft" AutoGenerateColumns="False">
+                                        <WrapPanel>
+                                            <TextBlock Text="Показать:"/>
+                                            <ComboBox SelectedIndex="0" Name="cb_soft" SelectionChanged="cb_soft_SelectionChanged">
+                                                <ComboBoxItem Content="Установлено"/>
+                                                <ComboBoxItem Content="Установлено/Необходимо"/>
+                                                <ComboBoxItem Content="Установлено/Не необходимо"/>
+                                            </ComboBox>
+                                        </WrapPanel>
+                                        <DataGrid Name="dg_soft" AutoGenerateColumns="False" Margin="0,20,0,0">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}"/>
                                                 <DataGridTextColumn Header="Расположение" Binding="{Binding Path=Path}"/>

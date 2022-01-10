@@ -24,6 +24,7 @@ namespace BD_Kursach_WPF
     /// </summary>
     public partial class InfoWindow : Window
     {
+        bool _loaded { get; set; } = false;
         string ConnString { get; set; }
         int ChosenCompID { get; set; }
         int ChosenDivisionID { get; set; } = 0;
@@ -32,6 +33,7 @@ namespace BD_Kursach_WPF
         public InfoWindow(string connString)
         {
             InitializeComponent();
+            _loaded = true;
             ConnString = connString;
             ChosenCompID = 0;
 
@@ -197,7 +199,26 @@ namespace BD_Kursach_WPF
         private void FillSoftwareInfo()
         {
             List<SoftVisualModel> softList = new List<SoftVisualModel>();
-            foreach(var soft in ocs_db.software.Where(s => s.HARDWARE_ID == ChosenCompID && s.FOLDER != "" && s.FOLDER != null).ToList())
+            List<softwareModel> source;
+            switch(cb_soft.SelectedIndex)
+            {
+                case 1: //Установлено/Необходимо
+                    source = ocs_db.software.Where(s => s.HARDWARE_ID == ChosenCompID && s.FOLDER != "" && s.FOLDER != null).ToList()
+                        .Where(s => wpa_db.position_software_bindings.ToList()
+                        .Any(bind => ocs_db.software_name.Where(sn => sn.ID == s.NAME_ID).ToList()
+                        .Any(sn => sn.NAME.Contains(bind.soft_name)))).ToList();
+                    break;
+                case 2: //Установлено/Не необходимо
+                    source = ocs_db.software.Where(s => s.HARDWARE_ID == ChosenCompID && s.FOLDER != "" && s.FOLDER != null).ToList()
+                        .Where(s => !wpa_db.position_software_bindings.ToList()
+                        .Any(bind => ocs_db.software_name.Where(sn => sn.ID == s.NAME_ID).ToList()
+                        .Any(sn => sn.NAME.Contains(bind.soft_name)))).ToList();
+                    break;
+                default: //Всё установленное
+                    source = ocs_db.software.Where(s => s.HARDWARE_ID == ChosenCompID && s.FOLDER != "" && s.FOLDER != null).ToList();
+                    break;
+            }
+            foreach(var soft in source)
             {
                 string softname = ocs_db.software_name.Where(s_name => s_name.ID == soft.NAME_ID).First().NAME;
                 string softver = ocs_db.software_version.Where(s_ver => s_ver.ID == soft.VERSION_ID).First().VERSION;
@@ -471,7 +492,7 @@ namespace BD_Kursach_WPF
             int unneeded_installed = 0;
             int needed_uninstalled = 0;
 
-            foreach(var soft in ocs_db.software.ToList())
+            foreach(var soft in ocs_db.software.Where(s=> s.HARDWARE_ID == ChosenCompID).ToList())
             {
                 string soft_name = ocs_db.software_name.Find(soft.NAME_ID).NAME;
                 if (wpa_db.position_software_bindings.Any(bind => soft_name.Contains(bind.soft_name)))
@@ -479,7 +500,8 @@ namespace BD_Kursach_WPF
                 else
                     unneeded_installed++;
             }
-            foreach(var bind in wpa_db.position_software_bindings)
+            int pos_id = wpa_db.position_obj_bindings.Where(bind => bind.hardware_id == ChosenCompID).First().position_id;
+            foreach(var bind in wpa_db.position_software_bindings.Where(bind => bind.position_id == pos_id))
             {
                 if (!ocs_db.software_name.Any(name => name.NAME.Contains(bind.soft_name)))
                     needed_uninstalled++;
@@ -490,6 +512,12 @@ namespace BD_Kursach_WPF
             pieCollection.Add(new PieSegment { Color = Colors.Yellow, Value = unneeded_installed, Name = "Установлено/Не необходимо" });
             pieCollection.Add(new PieSegment { Color = Colors.Red, Value = needed_uninstalled, Name = "Не установлено/Необходимо" });
             pie_soft.Data = pieCollection;
+        }
+
+        private void cb_soft_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(_loaded)
+                FillSoftwareInfo();
         }
     }
 }
