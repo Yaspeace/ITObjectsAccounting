@@ -12,14 +12,14 @@ namespace BD_Kursach_WPF
         [Key]
         public int? id { get; set; }
         public string name { get; set; }
-        public string descriprion { get; set; }
+        public string description { get; set; }
         public Position() { }
 
-        public Position(int? id, string name, string descriprion)
+        public Position(int? id, string name, string description)
         {
             this.id = id;
             this.name = name;
-            this.descriprion = descriprion;
+            this.description = description;
         }
     }
 }

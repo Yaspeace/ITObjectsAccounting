@@ -41,12 +41,15 @@ namespace BD_Kursach_WPF
         void RefillSoft(int pos_id)
         {
             lb_soft.Items.Clear();
-            foreach(var bind in wpa_db.position_software_bindings.Where(b => b.position_id == pos_id))
+            if (wpa_db.position_software_bindings.Any(b => b.position_id == pos_id))
             {
-                ListBoxItem lbi = new ListBoxItem();
-                lbi.Content = bind.soft_name;
-                lbi.DataContext = bind.id;
-                lb_soft.Items.Add(lbi);
+                foreach (var bind in wpa_db.position_software_bindings.Where(b => b.position_id == pos_id))
+                {
+                    ListBoxItem lbi = new ListBoxItem();
+                    lbi.Content = bind.soft_name;
+                    lbi.DataContext = bind.id;
+                    lb_soft.Items.Add(lbi);
+                }
             }
         }
 
@@ -64,7 +67,7 @@ namespace BD_Kursach_WPF
             {
                 int selected_pos_id = (int)((ListBoxItem)lb_positions.SelectedItem).DataContext;
                 RefillSoft(selected_pos_id);
-                tb_pos_desc.Text = wpa_db.positions.Find(selected_pos_id).descriprion;
+                tb_pos_desc.Text = wpa_db.positions.Find(selected_pos_id).description;
                 btn_add_soft.IsEnabled = true;
                 btn_del_pos.IsEnabled = true;
             }

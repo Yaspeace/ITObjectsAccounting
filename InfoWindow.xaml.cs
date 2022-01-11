@@ -29,7 +29,7 @@ namespace BD_Kursach_WPF
         int ChosenDivisionID { get; set; } = 0;
         OcsWebContext ocs_db;
         WpaContext wpa_db;
-        public InfoWindow(string connString)
+        public InfoWindow(string connString, string connWpaString)
         {
             InitializeComponent();
             _loaded = true;
@@ -41,8 +41,7 @@ namespace BD_Kursach_WPF
             ocs_db = new OcsWebContext(builder.Options);
 
             builder = new DbContextOptionsBuilder();
-            string localConn = "Host=localhost;Port=3306;Username=root;Password=0201;Database=WPA_DB;ConvertZeroDateTime=True";
-            builder.UseMySql(localConn, new MySqlServerVersion(new Version(8, 0, 27)));
+            builder.UseMySql(connWpaString, new MySqlServerVersion(new Version(8, 0, 27)));
             wpa_db = new WpaContext(builder.Options);
 
             WpaIntegrityUpdate(); //Синхронизация данных локальной бд и OCS-ки
@@ -428,7 +427,7 @@ namespace BD_Kursach_WPF
             {
                 ListBoxItem lbi = lb.SelectedItem as ListBoxItem;
                 string? selected_div_name = lbi.Content.ToString();
-                tb_division_desc.Text = wpa_db.units.Find((int)lbi.DataContext).descriprion;
+                tb_division_desc.Text = wpa_db.units.Find((int)lbi.DataContext).description;
             }
             else
                 tb_division_desc.Text = String.Empty;
@@ -443,7 +442,7 @@ namespace BD_Kursach_WPF
             else
                 u.id = 1;
             u.name = tb_div_name.Text;
-            u.descriprion = tb_div_desc.Text;
+            u.description = tb_div_desc.Text;
             wpa_db.units.Add(u);
             wpa_db.SaveChanges();
 

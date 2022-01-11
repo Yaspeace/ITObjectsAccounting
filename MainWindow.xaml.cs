@@ -15,7 +15,8 @@ namespace BD_Kursach_WPF
         private void btn_connect_Click(object sender, RoutedEventArgs e)
         {
             string conn = $"Host={host_tb.Text};Port={port_tb.Text};Database={schema_tb.Text};User={user_tb.Text};Password={password_tb.Password};ConvertZeroDateTime=True";
-            InfoWindow iw = new InfoWindow(conn);
+            string conn_wpa = $"Host={host_tb.Text};Port={port_tb.Text};Database=wpa_db;User={user_tb.Text};Password={password_tb.Password};ConvertZeroDateTime=True";
+            InfoWindow iw = new InfoWindow(conn, conn_wpa);
             iw.Show();
             this.Close();
         }
